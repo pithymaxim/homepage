@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <script src="head.js"></script>    
@@ -40,6 +41,11 @@
 <p><a href="https://apithymaxim.wordpress.com/2022/05/01/making-a-descriptives-table-in-r/" target="_blank">Make a pretty descriptives table</a>: Show summary stats for your sample.</p>
 
 
+<h3> Latex </h3>
+
+<a href=" https://github.com/pithymaxim/teaching/blob/main/syntax_highlighting_example.tex">Syntax highlighting</a>: Example code using the <b>minted</b> package. It makes this <a href="https://github.com/pithymaxim/teaching/blob/main/syntax_highlighting_example.pdf">PDF</a>. Useful for teaching materials. (Note: this works right away in Overleaf, but local users need to have installed Pygments. More <a href="https://www.overleaf.com/learn/latex/Code_Highlighting_with_minted">here</a>.)
+
+
 </section>
 
       <footer>
@@ -48,21 +54,21 @@
     <script src="./js/scale.fix.js"></script>
     
     <script>
-		function toggle(pid) {
+    function toggle(pid) {
             objid = "pubabs_" + pid.toString();
             linkid = "pubabslink_" + pid.toString();
             absobj = document.getElementById(objid);
             linkobj = document.getElementById(linkid);
-			if (absobj.style.display === "none") {
-				absobj.style.display = "inline";
+      if (absobj.style.display === "none") {
+        absobj.style.display = "inline";
                 linkobj.style.display = "none";
-			}
-			else {
-				absobj.style.display = "none";
+      }
+      else {
+        absobj.style.display = "none";
                 linkobj.style.display = "inline";
             }
-		}
-	</script>
+    }
+  </script>
   </body>
 </html>
 
