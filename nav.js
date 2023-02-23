@@ -10,5 +10,5 @@ document.write('<div>\
 <p class="contactinfo"><a href="./data.html">Data</a></p>\
 <p class="lastcontactinfo"><a href="https://scholar.google.com/citations?user=aYALu3oAAAAJ&hl=en">Google Scholar</a></p>\
     </div>\
-     <img src="http://maximmassenkoff.com/images/maxim_pic.jpg" width="200px" alt="Photo" />\
+    <!-- <img src="http://maximmassenkoff.com/images/maxim_pic.jpg" width="200px" alt="Photo" />\ -->
 ');
