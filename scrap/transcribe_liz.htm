@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="shortcut icon" href="http://www.talciocdesign.com/wp-content/uploads/2016/11/cropped-Favicon-270x270.png">
+<link href="https://fonts.googleapis.com/css?family=Nunito:400,700" rel="stylesheet">
+<style>
+body{
+	font-family: 'Nunito', sans-serif;
+font-size: 11pt;
+background: #FAFBFB;
+color: #333;
+	}
+audio { 
+	width: 100%; 
+}
+nav {
+    width: 100%;
+    margin: 10px;
+    padding: 10px;
+    border-right: thick solid #000000;
+}
+text {
+	width: 60%;
+	margin: 10px;
+	padding: 10px;
+}
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 0px solid #ccc;
+	background: #64bdff;
+	border-radius: 2px;
+	color: #fff;
+	font-family: 'Nunito', sans-serif;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+.custom-file-upload:hover{
+    border: 0px solid #ccc;
+	background: #31a7ff;
+	border-radius: 2px;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+h1{ 
+	margin-left: 10%;
+	font-family: inherit;
+	    font-weight: 500;
+	    line-height: 1.1;
+	    color: inherit;
+	}
+	table {
+	    border-collapse:separate;
+	    border:solid #ccc  1px;
+	}
+	b {
+	    font-weight: 700;
+	}
+	td, th {
+	    border-left:solid black 0px;
+	    border-top:solid black 0px;
+	}
+
+	th {
+	    background-color: blue;
+	    border-top: none;
+	}
+
+	td:first-child, th:first-child {
+	     border-left: none;
+	}
+	table.hello {
+	    border-collapse:separate;
+	    border:solid #E0E0E0  0px;
+		font-size:13px;
+	}
+	textarea.box {
+		font-family: 'Nunito', sans-serif;
+	    border-collapse:separate;
+	    border:solid #ccc  1px;
+	    border-radius:4px;
+	    -moz-border-radius:4px;
+		resize: none;
+	}
+	textarea.typing {
+		font-family: 'Nunito', sans-serif;
+		width: 90%;
+	    border-collapse:separate;
+	    border:solid #ccc  1px;
+	    border-radius:4px;
+	    -moz-border-radius:4px;
+		resize: none;
+	}
+</style>
+
+<meta charset="UTF-8">
+<title>Transcription Tool</title>
+
+<script type="text/javascript">
+function insertText(val,e){
+document.getElementById(e).innerHTML+=val;
+  }
+</script><body>
+<BR><BR><h1>Transcription Tool</h2><center>
+	<table width="80%" cellpadding="20px" bgcolor="#fff"><tr><td width="400px" valign="top" style="padding: 20px 50px 20px 20px;">
+	To begin, choose an audio file and click into the textbox. <br><br>
+Then press:<br><span style="font-size:11pt; margin-left:10px;">	<table class="hello"><tr border="0px"><td width="70px"><B>Tab</b></td><td>To start or stop</td></tr>
+	<tr><td width="110px"><B>Esc</b></td><td>To rewind 4 seconds</td></tr>
+	<tr><td width="110px"><B>`</b></td><td>To skip forward 4 seconds</td></tr>
+		<tr><td width="110px"><B>Enter</b></td><td>When other person starts talking</td></tr>
+		<tr><td width="110px"><B>Shift + Enter</b></td><td>To return without a timestamp</td></tr>
+		<tr><td width="110px"><B>[</b></td><td>To slow down playback</td></tr>
+		<tr><td width="110px"><B>]</b></td><td>To speed it up</td></tr></table>
+</span><BR>
+
+	<label for="file_upload" class="custom-file-upload">
+	    Choose a file
+	</label>
+	<input id="file_upload" type="file"/>
+	<br><br>
+	<audio id="audio_player" controls=""></audio>
+	<br><br>
+	<br>
+	<table class="hello"><tr><td width="110px">Speaker 1 </td><td>Specify a Key</td></tr>
+	<tr><td><textarea class="box" id="speaker1" cols="12" rows="1">Maxim</textarea>
+</td><td><textarea class="box" id="speaker1key" cols="1" rows="1">=</textarea> 
+	 <tr><td>Speaker 2</td><td>Specify a Key</td></tr>
+<tr><td>
+	<textarea class="box" id="speaker2" cols="12" rows="1">Obama</textarea>
+</td><td><textarea class="box" id="speaker2key" cols="1" rows="1">\</textarea>
+</table>
+</td><td valign="top">
+Transcribe here:
+<p><textarea class="typing" id="textbox1" cols="80" rows="15" data-persist="garlic" method="POST"></textarea></p>
+</table><BR>If you have any questions or comments email Maxim: massenkoff@berkeley.edu.
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"> </script>
+<script src="https://cdn.jsdelivr.net/garlic.js/1.2.2/garlic.min.js"> </script>
+<script type="text/javascript">
+
+
+var chCode = 0;
+
+file_upload.onchange = function(){;
+var files = this.files;
+var file = URL.createObjectURL(files[0]); 
+audio_player.src = file
+};
+
+function GetChar (event){
+	chCode = ('charCode' in event) ? event.charCode : event.keyCode;
+	alert ("The Unicode character code is: " + chCode);
+}
+
+window.onkeydown = checkKey;
+window.onkeyup = checkKeyUp;
+var person_number = 2;
+
+function isPlaying(audelem) { return !audelem.paused; }
+
+function add(text){
+    var TheTextBox = document.getElementById("textbox1");
+    TheTextBox.value = TheTextBox.value + text;
+}
+
+//had to put this part on key up so that 
+//the default action, carriage return, would
+//still happen. 
+function checkKeyUp(e) {
+  e = e || window.event;
+  var myAudio = document.getElementById("audio_player");
+    if (e.keyCode == '13' & e.shiftKey == false )  { //return
+      var minutes = Math.floor(myAudio.currentTime / 60);
+      var seconds = Math.floor(myAudio.currentTime) - minutes*60;
+	  
+     if (seconds.toString().length == 1) {
+        var timestamp = minutes.toString() + ":0"+seconds.toString() + " ";
+      }
+      else {
+        var timestamp = minutes.toString() + ":"+seconds.toString() +" ";
+      }
+	 add(timestamp);
+     }
+}
+
+function checkKey(e) {
+	e = e || window.event;
+	var myAudio = document.getElementById("audio_player");
+	
+	/// generate time stamp
+	var minutes = Math.floor(myAudio.currentTime / 60);
+    var seconds = Math.floor(myAudio.currentTime) - minutes*60;  
+    if (seconds.toString().length == 1) {var timestamp = minutes.toString() + ":0"+seconds.toString() + " ";}
+    else {var timestamp = minutes.toString() + ":"+seconds.toString() +" ";}
+	///
+	
+	var speaker1key = "187";
+	var curElement = document.activeElement;
+	
+	var keyCharToCode = {"Backspace":8,"Tab":9,"Enter":13,"Shift":16,"Ctrl":17,"Alt":18,"Pause/Break":19,"Caps Lock":20,"Esc":27,"Space":32,"Page Up":33,"Page Down":34,"End":35,"Home":36,"Left":37,"Up":38,"Right":39,"Down":40,"Insert":45,"Delete":46,"0":48,"1":49,"2":50,"3":51,"4":52,"5":53,"6":54,"7":55,"8":56,"9":57,"A":65,"B":66,"C":67,"D":68,"E":69,"F":70,"G":71,"H":72,"I":73,"J":74,"K":75,"L":76,"M":77,"N":78,"O":79,"P":80,"Q":81,"R":82,"S":83,"T":84,"U":85,"V":86,"W":87,"X":88,"Y":89,"Z":90,"Windows":91,"Right Click":93,"Numpad 0":96,"Numpad 1":97,"Numpad 2":98,"Numpad 3":99,"Numpad 4":100,"Numpad 5":101,"Numpad 6":102,"Numpad 7":103,"Numpad 8":104,"Numpad 9":105,"Numpad *":106,"Numpad +":107,"Numpad -":109,"Numpad .":110,"Numpad /":111,"F1":112,"F2":113,"F3":114,"F4":115,"F5":116,"F6":117,"F7":118,"F8":119,"F9":120,"F10":121,"F11":122,"F12":123,"Num Lock":144,"Scroll Lock":145,"My Computer":182,"My Calculator":183,";":186,"=":187,",":188,"-":189,".":190,"/":191,"`":192,"[":219,"\\":220,"]":221,"'":222};
+	var charCode = (typeof e.which == "number") ? e.which : e.charCode;
+	
+	//console.log("= in array " + keyCharToCode["="]);
+	//console.log("speaker code in array " + keyCharToCode[document.getElementById('speaker1key').value]);
+	console.log("charcode just typed " + charCode);
+	console.log("input charcode: " + window.chCode);
+	//console.log("which: " + e.which);
+	//console.log(e);
+	
+	var speaker1 = document.getElementById('speaker1').value;
+	var speaker2 = document.getElementById('speaker2').value;
+	
+	if ( curElement.id == "textbox1") {
+		 console.log("document speaker1key " + document.getElementById('speaker1key').value);
+		 var speaker1key = document.getElementById('speaker1key').value;
+		 var speaker2key = document.getElementById('speaker2key').value;
+		 var skipVal = 4;
+		 console.log("speaker1key " + speaker1key);
+	     var speakerCode = keyCharToCode[document.getElementById('speaker1key').value.toUpperCase()];
+	     console.log("sp " + speakerCode);
+	}
+	
+	
+	if (e.keyCode == '9') { // tab
+		  if ( curElement.id == "textbox1") {
+			  e.preventDefault();
+				if (isPlaying(myAudio)) {
+				  myAudio.pause()
+				}
+				else {
+				  myAudio.play()
+				}
+			}
+	}
+	if (e.keyCode == '27') { // esc
+	  e.preventDefault();
+	  myAudio.currentTime -= 4;
+	}
+	if (e.keyCode == '192') { // ` (grave accent)
+	  e.preventDefault();
+	  myAudio.currentTime += 4;
+	}
+	if (e.keyCode == '219') { // [
+	   e.preventDefault();
+	   myAudio.playbackRate -= .2;
+	 }
+	if (e.keyCode == '221') { // ]
+	   e.preventDefault();
+	   myAudio.playbackRate += .2;
+	 }
+
+	if (e.keyCode == keyCharToCode[speaker2key]) { // \
+	 e.preventDefault();
+	 add("\n"+timestamp+ " " + speaker2+": ");
+	}
+	//speaker1 testing
+	if (charCode == keyCharToCode[speaker1key]) { // =
+	 e.preventDefault();
+	 add("\n"+timestamp +" "+ speaker1+": ");
+	}
+}
+</script>
+
+</body></html>

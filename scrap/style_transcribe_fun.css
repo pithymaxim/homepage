@@ -1,0 +1,155 @@
+body {
+	color: black;
+	background-image: url(images/jason_sunset.jpg);
+}
+
+h1 {
+	text-decoration: underline;
+	font-family: Helvetica;
+	font-size: 100px;
+	margin-bottom: -100px;
+	color: lime;
+	margin-top: 0px;
+}
+
+ h3 {
+	text-align: left;
+	font-size: 16px;
+	color: red; 
+	font-style: italic;
+	background-color: black;
+	}
+
+h4 {
+	color: black;
+	/*padding: none;*/
+	text-align: center;
+	position: relative;
+	background-color: white;
+	/*margin-left: auto;*/
+	/*margin-right: auto;*/
+	top: 50px;
+	font-size: 40px;
+}
+
+h5 {
+	color: black;
+	padding: none;
+	text-align: center;
+	/* position: relative; */
+	background-color: purple;
+	font-size: 40px;
+}
+
+a {
+	text-decoration: bold;
+	color: #FF6699;
+	font-size: 60px;
+	text-align: center;
+	/*margin-left: 200px;*/
+	background-color: black;
+}
+
+#cover { 
+	text-align:center; 
+}
+
+#cover:hover {
+	opacity:0;
+}
+
+#nav, ul {
+	list-style-type: none;
+	padding: 0;
+	text-align: left;
+	}
+
+#container {
+	background-color: white;
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+	/*box-shadow: 10px 10px 5px #888888;
+	background: linear-gradient(to right, red , blue);*/
+}
+
+.imageBox {
+            position: relative;
+            float: left;
+        }
+        .imageBox .hoverImg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: none;
+        }
+        .imageBox:hover .hoverImg {
+            display: block;
+        }
+
+.selected {
+	color = pink;
+}
+
+.href {
+	color:red;
+}
+
+.box {
+     display:none;
+     position: absolute;
+     top: 400px;
+     left: 350px;
+    background: yellow;
+    padding: 15px;
+    border: 12px groove orange;
+}
+
+.html-marquee {
+	height:60px;
+	width:100%;
+	background-color:000000;
+	background-image:url(http://);
+	font-family:times;
+	font-size:48px;
+	color:9933CC;
+	font-style:italic;
+	border-width:0;
+	border-style:solid;
+	border-color:000000;
+}
+
+a:hover + .box {
+     display:block;
+}
+
+#header {
+	background-color: #66ccff;
+	color: white;
+	text-align: center;
+	padding: 10px;
+}
+
+#content {
+	padding: 10px 10px 10px 10px;
+}
+
+#nav {
+	width: 180px;
+	float: left;
+	color: red;
+	text-align: center;
+}
+
+#main {
+	width: 600px;
+	float: right;
+}
+
+#footer {
+	clear: both;
+	padding: 10px;
+	background-color: #999999;
+	color: white;
+	text-align: right;
+}

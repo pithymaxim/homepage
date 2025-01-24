@@ -1,0 +1,53 @@
+body {
+    font-family: "Lato", sans-serif;
+}
+
+a:hover {
+    background-color: yellow;
+}
+
+.my_nav {
+    height: 100%;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+.my_nav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+}
+
+.my_nav a:hover {
+    color: red;
+    background-color: #80ffff;
+}
+
+.main {
+    margin-left: 160px; /* Same as the width of the my_nav */
+    font-size: 22px; /* Increased text to enable scrolling */
+    padding: 0px 10px;
+}
+
+img {
+   margin-left: 160px;
+   padding:15px;
+   background: black;
+   max-width: 100%;
+   min-width: 200px;
+   height: auto;
+
+}
+
+@media screen and (max-height: 450px) {
+    .my_nav {padding-top: 15px;}
+    .my_nav a {font-size: 18px;}
+}

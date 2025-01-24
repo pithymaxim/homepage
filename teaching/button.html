@@ -1,0 +1,123 @@
+
+<!-- saved from url=(0034)http://fosslien.com/m/button1.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="shortcut icon" href="https://www.freeiconspng.com/uploads/push-button-icon-png-2.png">
+<title>The Button</title>
+<link href="https://s3.us-west-2.amazonaws.com/maximmassenkoff.com/button_files/css" rel="stylesheet">
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.js"></script>
+<script>
+	$("btn").click(function(e) {
+	    e.preventDefault();
+	    $.ajax({
+	        type: "POST",
+	        url: "/maxim/buttonresult.html",
+	        data: { 
+	            id: $(this).val(), // < note use of 'this' here
+	            access_token: $("#access_token").val() 
+	        },
+	        success: function(result) {
+	            alert('ok');
+	        },
+	        error: function(result) {
+	            alert('error');
+	        }
+	    });
+	});
+</script>
+<style>
+	.wrapper {
+	    text-align: center;}
+		body{
+		font-family: 'Nunito', sans-serif;
+	font-size: 11pt;
+	background: #fff;
+	color: #333;
+		}
+	button {
+	  -webkit-border-radius: 4;
+	  -moz-border-radius: 4;
+	  border-radius: 4px;
+	  border-width: 0px;
+	  color: #ffffff;
+	  font-size: 32px;
+	  background: #f53b3b;
+	  padding: 14px 25px 14px 25px;
+	  width: 400px;
+	  text-decoration: none;
+	}
+	
+	button:hover {
+	  background: #d6202f;
+	  text-decoration: none;
+	}
+	
+	button:disabled,
+	button[disabled]{
+	  border: 1px solid #999999;
+	  background-color: #cccccc;
+	  color: #666666;
+	}
+	.myClass{ 
+		-webkit-border-radius: 4;
+	  -moz-border-radius: 4;
+	  border-radius: 4px;
+	  border-width: 0px;
+	  color: #000;
+	  font-size: 14px;
+	  background: #fff;
+	  padding: 14px 25px 14px 25px;
+	  width: 300px;
+	  text-decoration: none;
+		
+	}
+	h1{ 
+		font-family: inherit;
+		    font-weight: 500;
+		    line-height: 1.1;
+		    color: inherit;
+		}
+	</style>
+</head><body style=""><br><br><br><center>
+		<table width="80%" cellpadding="20px" bgcolor="#fff"><tbody><tr><td text-align="left;"><h1>Class: GSPP 249 Section </h1>Click the button below if you're confused and I'll receive an anonymous notification. You can click the button every 30 seconds. <br><br><br><br><br>
+		<div class="wrapper">
+	<button id="submit" onclick="submitClick()">I'm confused!</button>		
+</div>
+
+<script type="text/javascript">//<![CDATA[
+
+$(window).load(function(){
+
+$(function() {
+    $("button").click(function() {
+		$("button").text('Letting Maxim know...'); 
+        $("button").attr("disabled", "disabled");
+        setTimeout(function() {
+			$("button").text('I am confused!');
+            $("button").removeAttr("disabled");      
+        }, 30000);
+    });
+});
+});//]]>
+
+
+</script>
+
+<script src="https://s3.us-west-2.amazonaws.com/maximmassenkoff.com/button_files/firebase.js.download"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyB3tPlA4D6DB_p1m1Q5ZVS6zQmqfsv9ZU4",
+    authDomain: "maxim-83cfc.firebaseapp.com",
+    databaseURL: "https://maxim-83cfc.firebaseio.com",
+    projectId: "maxim-83cfc",
+    storageBucket: "",
+    messagingSenderId: "611688048290"
+  };
+  firebase.initializeApp(config);
+</script>
+<script src="https://s3.us-west-2.amazonaws.com/maximmassenkoff.com/button_files/index.js.download">
+		
+	</script>
+  
+      
+</td></tr></tbody></table></center></body></html>

@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<script src="head.js"></script>    
+<body>
+        <div class="wrapper">
+<header>
+<script src="nav.js"></script>
+</header>
+
+<section>
+
+<h2> Code </h2>
+
+<p>Here are some code scraps in Stata and R that I frequently use.</p>
+
+<h3> Stata </h3>
+
+<p><a href="https://apithymaxim.wordpress.com/2022/03/13/making-descriptive-tables-in-stata/" target="_blank">Descriptives table</a>: Show summary stats for your sample.</p>
+
+
+<p><a href="https://apithymaxim.wordpress.com/2022/04/20/making-a-pretty-balance-table-in-stata/" target="_blank">Balance table</a>: Show means and standard deviations with different samples across columns.</p>
+
+<p><a href="https://apithymaxim.wordpress.com/2023/01/19/coefplot-by-hand/" target="_blank">Postfile for a bootstrap</a>: Run analyses in a loop and save results in a tempfile.</p>
+
+<p><a href="https://apithymaxim.wordpress.com/2023/01/19/coefplot-by-hand/" target="_blank">Coefplot by hand</a>: Save coefficients and standard errors from models and display them in a scatter plot.</p>
+
+
+<p><a href="https://apithymaxim.wordpress.com/2022/12/18/stata-commands-for-self-documenting-tables-and-figures/" target="_blank">Self-documenting tables and figures</a>: Automatically add a footer to .tex tables and figures saying where and when they were made.</p>
+
+
+<p><a href="https://apithymaxim.wordpress.com/2022/02/15/shading-a-plot-in-stata/" target="_blank">Shaded plot</a>: Shade a certain range of x-axis values.</p>
+
+
+<h3> R </h3>
+
+
+<p><a href="https://github.com/pithymaxim/teaching/blob/main/Rscraps/regression_table.r" target="_blank">Regression table</a>: Make a regression table where outcome means are reported in the table, N changes across columns, and columns have different standard error adjustments (e.g., clusters). The table it makes is <a href="https://htmlpreview.github.io/?https://github.com/pithymaxim/teaching/blob/main/Rscraps/reg_table_test.html">here</a>.</p> 
+
+
+<p><a href="https://apithymaxim.wordpress.com/2022/05/01/making-a-descriptives-table-in-r/" target="_blank">Make a pretty descriptives table</a>: Show summary stats for your sample.</p>
+
+
+<h3> Latex </h3>
+
+<a href=" https://github.com/pithymaxim/teaching/blob/main/syntax_highlighting_example.tex">Syntax highlighting</a>: Example code applying R and Stata syntax highlighting using the <b>minted</b> package. It makes this <a href="https://github.com/pithymaxim/teaching/blob/main/syntax_highlighting_example.pdf">PDF</a>. (Note: this works right away in Overleaf, but local users need to have installed Pygments. More <a href="https://www.overleaf.com/learn/latex/Code_Highlighting_with_minted">here</a>.)
+
+
+</section>
+
+      <footer>
+      </footer>
+    </div>
+    <script src="./js/scale.fix.js"></script>
+    
+    <script>
+    function toggle(pid) {
+            objid = "pubabs_" + pid.toString();
+            linkid = "pubabslink_" + pid.toString();
+            absobj = document.getElementById(objid);
+            linkobj = document.getElementById(linkid);
+      if (absobj.style.display === "none") {
+        absobj.style.display = "inline";
+                linkobj.style.display = "none";
+      }
+      else {
+        absobj.style.display = "none";
+                linkobj.style.display = "inline";
+            }
+    }
+  </script>
+  </body>
+</html>
+

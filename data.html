@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="style.css">
+  <title> Maxim Massenkoff | Data </title>
+</head>
+<script src="head.js"></script>    
+
+<body>
+        <div class="wrapper">
+<header>
+<script src="nav.js"></script>
+</header>
+<section>
+
+<h3> State Unemployment Insurance Laws </h3>
+
+Below are digitized provisions of state UI laws including the maximum duration, maximum weekly benefit amounts, and existence of waiting periods reported every January and July from 1970 to 2024, last updated July 2024. The original documents were accessed at this <a href="https://oui.doleta.gov/unemploy/statelaws.asp">Department of Labor page</a>. These were compiled with the excellent help of <a href="https://www.linkedin.com/in/jalaluddin-khan-faruq-0587aa10"> Faruq Razzaq</a>. Thanks also to <a href="https://econ.williams.edu/profile/lshore/">Lara Shore-Sheppard</a> for edits.
+
+<br><br>
+<a href="data/US_Unemployment_laws.xlsx">Raw Excel data</a>
+<br>
+<a href="data/statelaws.dta">Stata file</a> and <a href="data/statelaws.do"> do file</a> for importing from Excel and cleaning (some judgment calls are involved)
+
+<hr>
+<h3> WARN Notices </h3>
+
+<a href="https://peterjonesecon.com/" target="_blank">Peter Jones</a> 
+and I collected <a href="https://en.wikipedia.org/wiki/Worker_Adjustment_and_Retraining_Notification_Act_of_1988" target="_blank">WARN notices</a> 
+	for ten states, some of which were only attainable via FOIA. The files are <a href="data/raw_warn.zip">here</a>.
+
+<br><br>
+
+ There's a lot of confusion around this law among employers. Many report when they're not required to and many more fail to report in cases clearly covered by the statute. See this <a href="https://www.gao.gov/assets/240/239817.pdf">GAO report</a> for more.
+
+<hr>
+<h3> SIPP data </h3>
+
+This <a href="data/sipp_download.do">Stata script</a> downloads, extracts, and creates .dta files from all original SIPP Core files posted <a href= "http://www.nber.org/data/survey-of-income-and-program-participation-sipp-data.html">here</a> by the NBER. 
+
+</section>
+
+      <footer>
+      </footer>
+    </div>
+    <script src="./js/scale.fix.js"></script>
+    
+    <script>
+		function toggle(pid) {
+            objid = "pubabs_" + pid.toString();
+            linkid = "pubabslink_" + pid.toString();
+            absobj = document.getElementById(objid);
+            linkobj = document.getElementById(linkid);
+			if (absobj.style.display === "none") {
+				absobj.style.display = "inline";
+                linkobj.style.display = "none";
+			}
+			else {
+				absobj.style.display = "none";
+                linkobj.style.display = "inline";
+            }
+		}
+	</script>
+  </body>
+</html>
+
