@@ -107,7 +107,7 @@
                 clicksRef.on('child_added', (snapshot) => {
                     if (initialLoadComplete) {
                         setShowNotification(true);
-                        setTimeout(() => setShowNotification(false), 10000);
+                        setTimeout(() => setShowNotification(false), 5000);
                     }
                     
                     clicksRef.once('value', snapshot => {
