@@ -1,1 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="style.css">
+  <title> Maxim Massenkoff | Self-Documenting </title>
+</head>
+<script src="head.js"></script>    
+<body>
+    <div class="wrapper">
+        <header>
+            <script src="nav.js"></script>
+        </header>
+        <section>
+            <h2>Stata commands for self-documenting tables and figures</h2>
+            <p>Posted on December 18, 2022</p>
+            
+            <p>Have you ever struggled to find the exact script that made a certain table or figure in Stata?</p>
 
+            <p>Here are two Stata commands that make it easier to document output. The syntax is just:</p>
+
+            <pre><code>notetab: [all your table code], dofile(name_of_your_dofile)</code></pre>
+
+            <h3>For tables:</h3>
+
+            <pre><code>cap program drop notetab
+program define notetab, eclass
+    syntax anything [using/], dofile(string) [*]
+    
+    display "`0'"
+    
+    * remove dofile option:
+    local command = subinstr("`0'","dofile(`dofile')"","",.)
+    local command = subinstr("`command'",":","",.)
+    
+    `command'
+    display "Filename: is here: " "'using'"'
+    file open  myfile using "'using'",  read write
+    
+    * Go to end of file
+    file seek myfile eof
+    file write myfile _n "% Made on `c(current_date)' at `c(current_time)' by `c(username)' in `dofile'.do"
+    
+    file close myfile
+    display "~~~Added notes to  " "'using'"'
+end</code></pre>
+
+            <p>Here's an example:</p>
+
+            <pre><code>sysuse auto, clear
+eststo m1: reg price mpg
+eststo m2: reg price mpg trunk
+
+notetab: esttab * using t.tex, replace dofile(testing)</code></pre>
+
+            <p>This adds a note to the bottom of the .tex table:</p>
+
+            <pre><code>13  [1em]
+14  \_cons     &     11253.1\sym{***}&     11253.1\sym{***}&
+15           &      (9.61)        &      (9.61)        &
+16  \hline
+17  \(N\)     &         74         &         74         &
+18  \hline\hline
+19  \multicolumn{4}{l}{\footnotesize \textit{t} statistics in parentheses}
+20  \multicolumn{4}{l}{\footnotesize \sym{*} \(p<0.05\), \sym{**}}
+21  \end{tabular}
+22  }
+23
+24  % Made on 17 Dec 2022 at 17:11:29 by JohnDoe in testing.do</code></pre>
+
+        </section>
+        <footer>
+        </footer>
+    </div>
+    <script src="./js/scale.fix.js"></script>
+    
+    <script>
+        function toggle(pid) {
+            objid = "pubabs_" + pid.toString();
+            linkid = "pubabslink_" + pid.toString();
+            absobj = document.getElementById(objid);
+            linkobj = document.getElementById(linkid);
+            if (absobj.style.display === "none") {
+                absobj.style.display = "inline";
+                linkobj.style.display = "none";
+            }
+            else {
+                absobj.style.display = "none";
+                linkobj.style.display = "inline";
+            }
+        }
+    </script>
+</body>
+</html>
