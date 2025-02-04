@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css">
+  <title> Maxim Massenkoff | R regression table </title>
+  <style>
+    pre {
+      margin: 2em 0;
+    }
+    .exhibit-block-wrapper {
+      position: relative;
+      margin: 2em 0;
+    }
+    .copy-button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 5px 10px;
+      background: #f5f5f5;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .copy-button:hover {
+      background: #e5e5e5;
+    }
+  </style>
+</head>
+<script src="../head.js"></script>    
+<body>
+    <div class="wrapper">
+        <header>
+            <a href="http://maximmassenkoff.com/"> <h2>Maxim Massenkoff</h2> </a>
+            <hr/>
+            <p class="contactinfo"><a href="../#bio">Bio</a></p>
+            <p class="contactinfo"><a href="../#workingpapers">Working Papers</a></p>
+            <p class="contactinfo"><a href="../#publications">Publications</a></p>
+            <p class="contactinfo"><a href="../#workinprogress">Work in Progress</a></p>
+            <p class="contactinfo"><a href="../#teaching">Teaching</a></p>
+            <p class="contactinfo"><a href="../#tools">Tools</a></p>
+            <p class="contactinfo"><a href="../data.html">Data</a></p>
+            <p class="lastcontactinfo"><a href="https://scholar.google.com/citations?user=aYALu3oAAAAJ&hl=en">Google Scholar</a></p>
+        </header>
+        
+        <section>
+            <h3>R code for a regression table</h3>
+            
+            <p>Here is <a href="https://github.com/pithymaxim/teaching/blob/main/Rscraps/regression_table.r">R code</a> to make a table like this:</p>
+
+            <div class="exhibit-block-wrapper"><img src="R_regression_table.png" alt="Screenshot showing R regression table" class="img-responsive" style="width: 75%"/></div>
+
+  <p>I wanted a regression table where:</p>
+  <ul>
+    <li>Outcome means are reported in the table</li>
+    <li>N changes across columns</li>
+    <li>Columns have different standard error adjustments, including clusters</li>
+  </ul>
+
+
+  <h3>Notes:</h3>
+  <p>There are several pitfalls with standard packages.</p>
+  <ul>
+    <li>
+      This simpler option works in stargazer but only if N does not change across columns:
+      <pre>se=starprep(mod1, mod2, mod3, clusters = auto$foreign, se_type = "stata")</pre>
+    </li>
+    <li>
+      <span>
+        <code>lm_robust()</code> does not work with stargazer (<a href="https://stackoverflow.com/questions/59224229/why-does-stargazer-give-me-a-table-of-output-for-my-lm-regression-output-but-not" target="_blank">StackOverflow discussion</a>)
+      </span>
+    </li>
+  </ul>
+
+        </section>
+        <footer>
+        </footer>
+    </div>
+    <script src="../js/scale.fix.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-stata.min.js"></script>
+    
+    <script>
+        function toggle(pid) {
+            objid = "pubabs_" + pid.toString();
+            linkid = "pubabslink_" + pid.toString();
+            absobj = document.getElementById(objid);
+            linkobj = document.getElementById(linkid);
+            if (absobj.style.display === "none") {
+                absobj.style.display = "inline";
+                linkobj.style.display = "none";
+            }
+            else {
+                absobj.style.display = "none";
+                linkobj.style.display = "inline";
+            }
+        }
+
+        // Add copy functionality
+        document.querySelectorAll('.copy-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const codeBlock = button.nextElementSibling.querySelector('code');
+                const textToCopy = codeBlock.textContent;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy:', err);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
