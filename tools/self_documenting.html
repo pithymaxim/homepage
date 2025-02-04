@@ -2,7 +2,32 @@
 <html lang="en">
 <head>
   <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css">
   <title> Maxim Massenkoff | Self-Documenting </title>
+  <style>
+    pre {
+      margin: 2em 0;
+    }
+    .exhibit-block-wrapper {
+      position: relative;
+      margin: 2em 0;
+    }
+    .copy-button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 5px 10px;
+      background: #f5f5f5;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .copy-button:hover {
+      background: #e5e5e5;
+    }
+  </style>
 </head>
 <script src="../head.js"></script>    
 <body>
@@ -10,7 +35,6 @@
         <header>
             <a href="http://maximmassenkoff.com/"> <h2>Maxim Massenkoff</h2> </a>
             <hr/>
-            
             <p class="contactinfo"><a href="./#bio">Bio</a></p>
             <p class="contactinfo"><a href="./#workingpapers">Working Papers</a></p>
             <p class="contactinfo"><a href="./#publications">Publications</a></p>
@@ -28,11 +52,13 @@
 
             <p>Here are two Stata commands that make it easier to document output. The syntax is just:</p>
 
-            <pre><code>notetab: [all your table code], dofile(name_of_your_dofile)</code></pre>
+            <div class="exhibit-block-wrapper"><pre><code class="language-stata">notetab: [all your table code], dofile(name_of_your_dofile)</code></pre></div>
 
             <h3>For tables:</h3>
 
-            <pre><code>program define notetab, eclass
+            <div class="exhibit-block-wrapper">
+              <button class="copy-button">Copy</button>
+              <pre><code class="language-stata">program define notetab, eclass
     syntax anything [using/], dofile(string) [*]
     
     * remove dofile option:
@@ -48,19 +74,19 @@
     
     file close myfile
     display "~~~Added notes to  " "'using'"'
-end</code></pre>
+end</code></pre></div>
 
             <p>Here's an example:</p>
 
-            <pre><code>sysuse auto, clear
+             <div class="exhibit-block-wrapper"><pre><code class="language-stata">sysuse auto, clear
 eststo m1: reg price mpg
 eststo m2: reg price mpg trunk
 
-notetab: esttab * using t.tex, replace dofile(testing)</code></pre>
+notetab: esttab * using t.tex, replace dofile(testing)</code></pre></div>
 
             <p>This adds a commented note to the bottom of the .tex table:</p>
 
-            <pre><code>
+            <div class="exhibit-block-wrapper"><pre><code>
   \_cons     &     11253.1\sym{***}&     11253.1\sym{***}&
            &      (9.61)        &      (9.61)        &
   \hline
@@ -72,13 +98,15 @@ notetab: esttab * using t.tex, replace dofile(testing)</code></pre>
   }
 
   % Made on 17 Dec 2022 at 17:11:29 by JohnDoe in testing.do
-            </code></pre>
+            </code></pre></div>
 
             <h3>For figures:</h3>
 
             <p>The command below does the same thing for figures. Here, an <em>invisible</em> note is added at the bottom of the figure:</p>
 
-    <pre><code>program define notefig, eclass
+            <div class="exhibit-block-wrapper">
+              <button class="copy-button">Copy</button>
+              <pre><code class="language-stata">program define notefig, eclass
     syntax anything [using/], dofile(string) [*]
     
     * remove dofile option:
@@ -87,27 +115,31 @@ notetab: esttab * using t.tex, replace dofile(testing)</code></pre>
     
     `command' note("Made on `c(current_date)' at `c(current_time)' by `c(username)' in `dofile'.do", color(white%0))
 end</code></pre>
+            </div>
 
             <p>Here's an example:</p>
 
-            <pre><code>notefig: scatter price mpg, dofile(testing)
+            <pre><code class="language-stata">sysuse auto, clear
+notefig: scatter price mpg, dofile(testing)
 graph export t.pdf, replace</code></pre>
 
             <p>To see the note, you can open the PDF of the figure, select all, copy, and paste into any text program.</p>
 
             <p>The invisible text is at the bottom here:</p>
 
-            <img src="highlighted_scatter.png" alt="Scatter plot of price vs mileage" class="img-responsive"/>
+            <div class="exhibit-block-wrapper"><img src="highlighted_scatter.png" alt="Scatter plot of price vs mileage" class="img-responsive" style="width: 75%"/></div>
 
             <p>And you'll see this if you copy and paste:</p>
 
-            <img src="hidden_text_in_scatter.png" alt="Screenshot showing invisible text" class="img-responsive"/>
+            <div class="exhibit-block-wrapper"><img src="hidden_text_in_scatter.png" alt="Screenshot showing invisible text" class="img-responsive" style="width: 75%"/></div>
 
         </section>
         <footer>
         </footer>
     </div>
     <script src="../js/scale.fix.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-stata.min.js"></script>
     
     <script>
         function toggle(pid) {
@@ -124,6 +156,24 @@ graph export t.pdf, replace</code></pre>
                 linkobj.style.display = "inline";
             }
         }
+
+        // Add copy functionality
+        document.querySelectorAll('.copy-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const codeBlock = button.nextElementSibling.querySelector('code');
+                const textToCopy = codeBlock.textContent;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy:', err);
+                });
+            });
+        });
     </script>
 </body>
 </html>
