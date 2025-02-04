@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confusion Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.7.1/firebase-database-compat.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/javascript">
+        const { useState, useEffect, useRef } = React;
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC4eL9GqcVQPg0k1qCIYby0yAiL6VXe7yY",
+            authDomain: "maxim-83cfc.firebaseapp.com",
+            databaseURL: "https://maxim-83cfc.firebaseio.com",
+            projectId: "maxim-83cfc",
+            storageBucket: "maxim-83cfc.firebasestorage.app",
+            messagingSenderId: "611688048290",
+            appId: "1:611688048290:web:72a778340a4888266d59fb"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const clicksRef = database.ref('clicks');
+
+        const DashboardPage = () => {
+            const [data, setData] = useState([]);
+            const [showNotification, setShowNotification] = useState(false);
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            const processClicks = (snapshots) => {
+                const now = new Date();
+                const tenSecondsFromNow = new Date(now.getTime() + 10000);
+                const sixtyMinutesAgo = new Date(now - 60 * 60 * 1000);
+                
+                // Create intervals every 10 seconds, including future interval
+                const chartData = [];
+                for (let time = sixtyMinutesAgo; time <= tenSecondsFromNow; time = new Date(time.getTime() + 10000)) {
+                    chartData.push({
+                        time: time.toLocaleTimeString(),
+                        timestamp: time.getTime(),
+                        count: 0
+                    });
+                }
+
+                // Count clicks in each interval
+                snapshots.forEach(snapshot => {
+                    const click = snapshot.val();
+                    const clickTime = new Date(click.timestamp);
+                    if (clickTime >= sixtyMinutesAgo && clickTime <= now) {
+                        const intervalIndex = Math.floor(
+                            (clickTime - sixtyMinutesAgo) / 10000
+                        );
+                        if (intervalIndex >= 0 && intervalIndex < chartData.length) {
+                            chartData[intervalIndex].count++;
+                        }
+                    }
+                });
+
+                return chartData;
+            };
+
+            const updateChart = (chartData) => {
+                if (chartInstance.current) {
+                    chartInstance.current.destroy();
+                }
+
+                const ctx = chartRef.current.getContext('2d');
+                chartInstance.current = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.map(d => d.time),
+                        datasets: [{
+                            label: 'Confusion Clicks',
+                            data: chartData.map(d => d.count),
+                            borderColor: 'rgb(239, 68, 68)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            useEffect(() => {
+                let initialLoadComplete = false;
+
+                // Listen for new clicks
+                clicksRef.on('child_added', (snapshot) => {
+                    if (initialLoadComplete) {
+                        setShowNotification(true);
+                        setTimeout(() => setShowNotification(false), 5000);
+                    }
+                    
+                    clicksRef.once('value', snapshot => {
+                        const clicks = [];
+                        snapshot.forEach(childSnapshot => {
+                            clicks.push(childSnapshot);
+                        });
+                        const chartData = processClicks(clicks);
+                        setData(chartData);
+                        updateChart(chartData);
+                    });
+                });
+
+                // Initial load
+                clicksRef.once('value', snapshot => {
+                    const clicks = [];
+                    snapshot.forEach(childSnapshot => {
+                        clicks.push(childSnapshot);
+                    });
+                    const chartData = processClicks(clicks);
+                    setData(chartData);
+                    updateChart(chartData);
+                    
+                    // Mark initial load as complete
+                    initialLoadComplete = true;
+                });
+
+                const intervalId = setInterval(() => {
+                    clicksRef.once('value', snapshot => {
+                      const clicks = [];
+                      snapshot.forEach(childSnapshot => {
+                        clicks.push(childSnapshot);
+                      });
+                      const chartData = processClicks(clicks);
+                      setData(chartData);
+                      updateChart(chartData);
+                    });
+                  }, 10000);
+
+                chartRef.current.style.height = '400px';
+
+                return () => {
+                    clearInterval(intervalId);
+                    clicksRef.off();
+                    if (chartInstance.current) {
+                        chartInstance.current.destroy();
+                    }
+                };
+            }, []);
+
+            return React.createElement('div', { className: 'p-6' },
+                showNotification && React.createElement('div', {
+                    className: 'fixed top-0 left-0 right-0 bg-red-500 text-white text-center py-2 animate-bounce'
+                }, "A new click!"),
+                React.createElement('h1', { 
+                    className: 'mb-6 text-2xl font-bold' 
+                }, 'Confusion Dashboard'),
+                React.createElement('div', { 
+                    className: 'h-96 w-full' 
+                },
+                    React.createElement('canvas', {
+                        ref: chartRef
+                    })
+                )
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(DashboardPage));
+    </script>
+</body>
+</html>
