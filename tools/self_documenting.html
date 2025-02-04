@@ -77,6 +77,37 @@ notetab: esttab * using t.tex, replace dofile(testing)</code></pre>
 23
 24  % Made on 17 Dec 2022 at 17:11:29 by JohnDoe in testing.do</code></pre>
 
+            <h3>For figures:</h3>
+
+            <p>The command below does the same thing for figures. Here, an <em>invisible</em> note is added at the bottom of the figure:</p>
+
+            <pre><code>cap program drop notefig
+program define notefig, eclass
+    syntax anything [using/], dofile(string) [*]
+    
+    * remove dofile option:
+    local command = subinstr("`0'","dofile(`dofile')"","",.)
+    local command = subinstr("`command'",":","",.)
+    
+    display "`command'" // for debugging
+    `command' note("Made on `c(current_date)' at `c(current_time)' by `c(username)' in `dofile'.do", color(white%0))
+end</code></pre>
+
+            <p>Here's an example:</p>
+
+            <pre><code>notefig: scatter price mpg, dofile(testing)
+graph export t.pdf, replace</code></pre>
+
+            <p>To see the note, you can open the PDF of the figure, select all, copy, and paste into any text program.</p>
+
+            <p>The invisible text is at the bottom here:</p>
+
+            <img src="highlighted_scatter.png" alt="Scatter plot of price vs mileage" class="img-responsive"/>
+
+            <p>And you'll see this if you copy and paste:</p>
+
+            <img src="hidden_text_in_scatter.png" alt="Screenshot showing invisible text" class="img-responsive"/>
+
         </section>
         <footer>
         </footer>
