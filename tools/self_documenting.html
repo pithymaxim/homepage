@@ -32,8 +32,8 @@
 
             <h3>For tables:</h3>
 
-            <pre><code>cap program drop notetab
-program define notetab, eclass
+            <pre><code>
+    program define notetab, eclass
     syntax anything [using/], dofile(string) [*]
     
     display "`0'"
@@ -82,8 +82,8 @@ notetab: esttab * using t.tex, replace dofile(testing)</code></pre>
 
             <p>The command below does the same thing for figures. Here, an <em>invisible</em> note is added at the bottom of the figure:</p>
 
-            <pre><code>cap program drop notefig
-program define notefig, eclass
+            <pre><code>
+    program define notefig, eclass
     syntax anything [using/], dofile(string) [*]
     
     * remove dofile option:
