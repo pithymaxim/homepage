@@ -460,10 +460,15 @@ footer {
     word-wrap: break-word; }
 
   header {
-    padding: 0; }
+    padding: 0;
+    text-align: center; }
 
   header ul, header p.view {
     position: static; }
+
+  header img {
+    display: block;
+    margin: 0 auto; }
 
   pre, code {
     word-wrap: normal; } }
