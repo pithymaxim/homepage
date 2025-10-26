@@ -3,7 +3,6 @@ function loadNavigation() {
     const nav = `
         <a href="http://maximmassenkoff.com/"> <h2>Maxim Massenkoff</h2> </a>
         <hr/>
-        <p class="contactinfo"><a href="http://maximmassenkoff.com/#bio">Bio</a></p>
         <p class="contactinfo"><a href="http://maximmassenkoff.com/#publications">Publications</a></p>
         <p class="contactinfo"><a href="http://maximmassenkoff.com/#workingpapers">Working Papers</a></p>
         <p class="contactinfo"><a href="http://maximmassenkoff.com/#workinprogress">Work in Progress</a></p>
