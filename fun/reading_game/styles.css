@@ -1,0 +1,246 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa 0%, #f3e5f5 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.game-container {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+.title {
+    color: #5c6bc0;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 0 #e8eaf6;
+}
+
+.progress-bar {
+    margin-bottom: 25px;
+}
+
+.progress-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.progress-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.progress-dot.completed {
+    background: #66bb6a;
+    transform: scale(1.1);
+}
+
+.progress-dot.current {
+    background: #ffb74d;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.image-section {
+    margin-bottom: 20px;
+}
+
+.emoji-display {
+    font-size: 120px;
+    line-height: 1.2;
+    display: block;
+}
+
+.word-section {
+    margin-bottom: 30px;
+}
+
+.word-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 4rem;
+    font-weight: bold;
+    color: #37474f;
+}
+
+.letter {
+    width: 70px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.drop-zone {
+    width: 70px;
+    height: 80px;
+    border: 4px dashed #90caf9;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #e3f2fd;
+    transition: all 0.2s ease;
+}
+
+.drop-zone.drag-over {
+    border-color: #42a5f5;
+    background: #bbdefb;
+    transform: scale(1.1);
+}
+
+.drop-zone.correct {
+    border-style: solid;
+    border-color: #66bb6a;
+    background: #c8e6c9;
+    animation: bounce 0.5s ease;
+}
+
+.drop-zone.incorrect {
+    border-color: #ef5350;
+    background: #ffcdd2;
+    animation: shake 0.4s ease;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.choices-section {
+    margin-bottom: 20px;
+}
+
+.letter-choices {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.letter-card {
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: white;
+    cursor: grab;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+    user-select: none;
+    touch-action: none;
+}
+
+.letter-card:nth-child(1) { background: linear-gradient(135deg, #ff8a80, #ff5252); }
+.letter-card:nth-child(2) { background: linear-gradient(135deg, #82b1ff, #448aff); }
+.letter-card:nth-child(3) { background: linear-gradient(135deg, #b9f6ca, #69f0ae); }
+.letter-card:nth-child(4) { background: linear-gradient(135deg, #ffe57f, #ffd740); }
+
+.letter-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.letter-card:active, .letter-card.dragging {
+    cursor: grabbing;
+    transform: scale(1.1);
+    opacity: 0.8;
+}
+
+.instruction {
+    color: #78909c;
+    font-size: 1.1rem;
+}
+
+.celebration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.celebration h2 {
+    font-size: 3rem;
+    color: #66bb6a;
+    animation: bounce 1s ease infinite;
+}
+
+.celebration .stars {
+    font-size: 4rem;
+}
+
+.play-again-btn {
+    padding: 15px 40px;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #5c6bc0, #7e57c2);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(92, 107, 192, 0.4);
+    transition: all 0.2s ease;
+}
+
+.play-again-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(92, 107, 192, 0.5);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.game-container {
+    position: relative;
+}
+
+@media (max-width: 480px) {
+    .title { font-size: 2rem; }
+    .emoji-display { font-size: 80px; }
+    .word-display { font-size: 3rem; }
+    .letter, .drop-zone { width: 55px; height: 65px; }
+    .letter-card { width: 55px; height: 55px; font-size: 2rem; }
+}

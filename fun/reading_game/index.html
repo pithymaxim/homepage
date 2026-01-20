@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="title">Reading Game</h1>
+
+        <div class="progress-bar">
+            <div class="progress-dots"></div>
+        </div>
+
+        <div class="image-section">
+            <span class="emoji-display"></span>
+        </div>
+
+        <div class="word-section">
+            <div class="word-display"></div>
+        </div>
+
+        <div class="choices-section">
+            <div class="letter-choices"></div>
+            <p class="instruction">Drag the letter to the blank!</p>
+        </div>
+
+        <div class="celebration hidden">
+            <h2>Great Job!</h2>
+            <div class="stars">⭐⭐⭐</div>
+            <button class="play-again-btn">Play Again</button>
+        </div>
+    </div>
+
+    <script src="words.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
