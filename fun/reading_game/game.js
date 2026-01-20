@@ -9,6 +9,7 @@ const letterChoices = document.querySelector('.letter-choices');
 const progressDots = document.querySelector('.progress-dots');
 const celebration = document.querySelector('.celebration');
 const playAgainBtn = document.querySelector('.play-again-btn');
+const soundBtn = document.querySelector('.sound-btn');
 
 // Initialize audio on first interaction
 function initAudio() {
@@ -47,6 +48,13 @@ function playWrongSound() {
     osc.stop(audioContext.currentTime + 0.25);
 }
 
+function speakWord() {
+    const word = gameWords[currentWordIndex].word;
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.rate = 0.8;
+    speechSynthesis.speak(utterance);
+}
+
 function initProgressDots() {
     progressDots.innerHTML = '';
     for (let i = 0; i < gameWords.length; i++) {
@@ -67,16 +75,27 @@ function shuffleArray(arr) {
     return shuffled;
 }
 
+const VOWELS = ['A', 'E', 'I', 'O', 'U'];
+const CONSONANTS = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'V', 'W', 'X', 'Z'];
+
+function getDistractors(correctLetter) {
+    const isVowel = VOWELS.includes(correctLetter);
+    const pool = isVowel ? VOWELS : CONSONANTS;
+    const available = pool.filter(l => l !== correctLetter);
+    return shuffleArray(available).slice(0, 3);
+}
+
 function loadWord() {
     const wordData = gameWords[currentWordIndex];
     const word = wordData.word.toUpperCase();
-    const correctLetter = word[wordData.missingIndex];
+    const missingIndex = Math.floor(Math.random() * word.length);
+    const correctLetter = word[missingIndex];
 
     emojiDisplay.textContent = wordData.emoji;
 
     wordDisplay.innerHTML = '';
     for (let i = 0; i < word.length; i++) {
-        if (i === wordData.missingIndex) {
+        if (i === missingIndex) {
             const dropZone = document.createElement('div');
             dropZone.className = 'drop-zone';
             dropZone.dataset.correct = correctLetter;
@@ -89,7 +108,8 @@ function loadWord() {
         }
     }
 
-    const allLetters = shuffleArray([correctLetter, ...wordData.distractors]);
+    const distractors = getDistractors(correctLetter);
+    const allLetters = shuffleArray([correctLetter, ...distractors]);
     letterChoices.innerHTML = '';
     allLetters.forEach(letter => {
         const card = document.createElement('div');
@@ -209,5 +229,6 @@ function startGame() {
 }
 
 playAgainBtn.addEventListener('click', startGame);
+soundBtn.addEventListener('click', speakWord);
 
 startGame();
