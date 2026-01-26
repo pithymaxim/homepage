@@ -426,7 +426,7 @@ footer {
   width: 270px;
   float: left;
   position: fixed;
-  bottom: 50px;
+  bottom: 10px;
   -webkit-font-smoothing: subpixel-antialiased; }
 
 @media print, screen and (max-width: 1160px) {
