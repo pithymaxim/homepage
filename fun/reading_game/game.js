@@ -225,10 +225,31 @@ function updateScore() {
     scoreDisplay.textContent = `${firstTryCorrect} correct, ${wrong} missed (${percent}%)`;
 }
 
+function spawnConfetti() {
+    const container = document.querySelector('.game-container');
+    const rect = container.getBoundingClientRect();
+    const colors = ['#ff5252', '#ffb74d', '#66bb6a', '#42a5f5', '#ab47bc', '#ffd740'];
+    for (let i = 0; i < 30; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-particle';
+        const angle = Math.random() * 2 * Math.PI;
+        const dist = 80 + Math.random() * 120;
+        p.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+        p.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.left = '50%';
+        p.style.top = '45%';
+        p.style.animationDuration = (1.2 + Math.random() * 0.6) + 's';
+        container.appendChild(p);
+        p.addEventListener('animationend', () => p.remove());
+    }
+}
+
 function checkAnswer(letter, dropZone, card) {
     const correct = dropZone.dataset.correct;
     if (letter === correct) {
         playCorrectSound();
+        spawnConfetti();
         dropZone.textContent = letter;
         dropZone.classList.add('correct');
         firstTryTotal++;
@@ -242,7 +263,7 @@ function checkAnswer(letter, dropZone, card) {
             } else {
                 loadWord();
             }
-        }, 800);
+        }, 1500);
     } else {
         playWrongSound();
         madeWrongGuess = true;
