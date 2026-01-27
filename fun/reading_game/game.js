@@ -55,6 +55,10 @@ function playWrongSound() {
     osc.stop(audioContext.currentTime + 0.25);
 }
 
+function playPhoneticSound(letter) {
+    new Audio(`sounds/${letter.toLowerCase()}.ogg`).play();
+}
+
 function speakWord() {
     const word = gameWords[currentWordIndex].word;
     const utterance = new SpeechSynthesisUtterance(word);
@@ -154,6 +158,7 @@ function setupDragDrop() {
         offsetX = cx - startRect.left;
         offsetY = cy - startRect.top;
 
+        playPhoneticSound(activeCard.dataset.letter);
         activeCard.classList.add('dragging');
         activeCard.style.zIndex = '1000';
         activeCard.setPointerCapture?.(e.pointerId);
@@ -250,6 +255,7 @@ function checkAnswer(letter, dropZone, card) {
     if (letter === correct) {
         playCorrectSound();
         spawnConfetti();
+        setTimeout(speakWord, 500);
         dropZone.textContent = letter;
         dropZone.classList.add('correct');
         firstTryTotal++;
