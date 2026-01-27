@@ -1,6 +1,10 @@
 let currentWordIndex = 0;
 let audioContext = null;
 let gameWords = [];
+let firstTryCorrect = 0;
+let firstTryTotal = 0;
+let madeWrongGuess = false;
+let answerCheckedThisDrag = false;
 
 // DOM elements
 const emojiDisplay = document.querySelector('.emoji-display');
@@ -10,6 +14,9 @@ const progressDots = document.querySelector('.progress-dots');
 const celebration = document.querySelector('.celebration');
 const playAgainBtn = document.querySelector('.play-again-btn');
 const soundBtn = document.querySelector('.sound-btn');
+const scoreDisplay = document.querySelector('.score-display');
+const scoreBarCorrect = document.querySelector('.score-bar-correct');
+const scoreBarWrong = document.querySelector('.score-bar-wrong');
 
 // Initialize audio on first interaction
 function initAudio() {
@@ -110,13 +117,19 @@ function loadWord() {
 
     const distractors = getDistractors(correctLetter);
     const allLetters = shuffleArray([correctLetter, ...distractors]);
+    const cardColors = [
+        'linear-gradient(135deg, #ff8a80, #ff5252)',
+        'linear-gradient(135deg, #82b1ff, #448aff)',
+        'linear-gradient(135deg, #b9f6ca, #69f0ae)',
+        'linear-gradient(135deg, #ffe57f, #ffd740)'
+    ];
     letterChoices.innerHTML = '';
-    allLetters.forEach(letter => {
+    allLetters.forEach((letter, i) => {
         const card = document.createElement('div');
         card.className = 'letter-card';
         card.textContent = letter;
-        card.draggable = true;
         card.dataset.letter = letter;
+        card.style.background = cardColors[i];
         letterChoices.appendChild(card);
     });
 
@@ -128,81 +141,101 @@ function setupDragDrop() {
     const cards = document.querySelectorAll('.letter-card');
     const dropZone = document.querySelector('.drop-zone');
 
-    cards.forEach(card => {
-        card.addEventListener('dragstart', e => {
-            initAudio();
-            e.dataTransfer.setData('text/plain', card.dataset.letter);
-            card.classList.add('dragging');
-        });
-        card.addEventListener('dragend', () => card.classList.remove('dragging'));
+    let activeCard = null;
+    let startRect, offsetX, offsetY;
 
-        // Touch support
-        let touchClone = null;
-        card.addEventListener('touchstart', e => {
-            initAudio();
-            e.preventDefault();
-            card.classList.add('dragging');
-            touchClone = card.cloneNode(true);
-            touchClone.style.position = 'fixed';
-            touchClone.style.pointerEvents = 'none';
-            touchClone.style.zIndex = '1000';
-            touchClone.style.opacity = '0.8';
-            document.body.appendChild(touchClone);
-            const touch = e.touches[0];
-            touchClone.style.left = (touch.clientX - 35) + 'px';
-            touchClone.style.top = (touch.clientY - 35) + 'px';
-        });
-
-        card.addEventListener('touchmove', e => {
-            e.preventDefault();
-            if (!touchClone) return;
-            const touch = e.touches[0];
-            touchClone.style.left = (touch.clientX - 35) + 'px';
-            touchClone.style.top = (touch.clientY - 35) + 'px';
-            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-            if (elementBelow?.classList.contains('drop-zone')) {
-                dropZone.classList.add('drag-over');
-            } else {
-                dropZone.classList.remove('drag-over');
-            }
-        });
-
-        card.addEventListener('touchend', e => {
-            e.preventDefault();
-            card.classList.remove('dragging');
-            if (touchClone) {
-                const touch = e.changedTouches[0];
-                const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-                touchClone.remove();
-                touchClone = null;
-                dropZone.classList.remove('drag-over');
-                if (elementBelow?.classList.contains('drop-zone')) {
-                    checkAnswer(card.dataset.letter, dropZone);
-                }
-            }
-        });
-    });
-
-    dropZone.addEventListener('dragover', e => {
+    function onPointerDown(e) {
+        initAudio();
         e.preventDefault();
-        dropZone.classList.add('drag-over');
-    });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', e => {
+        activeCard = e.currentTarget;
+        startRect = activeCard.getBoundingClientRect();
+        const cx = e.clientX || e.touches[0].clientX;
+        const cy = e.clientY || e.touches[0].clientY;
+        offsetX = cx - startRect.left;
+        offsetY = cy - startRect.top;
+
+        activeCard.classList.add('dragging');
+        activeCard.style.zIndex = '1000';
+        activeCard.setPointerCapture?.(e.pointerId);
+    }
+
+    function onPointerMove(e) {
+        if (!activeCard) return;
         e.preventDefault();
+        const x = e.clientX ?? e.touches?.[0]?.clientX;
+        const y = e.clientY ?? e.touches?.[0]?.clientY;
+        if (x == null || y == null) return;
+        const dx = x - (startRect.left + offsetX);
+        const dy = y - (startRect.top + offsetY);
+        activeCard.style.transform = `translate(${dx}px, ${dy}px) scale(1.1)`;
+
+        activeCard.style.pointerEvents = 'none';
+        const elementBelow = document.elementFromPoint(x, y);
+        activeCard.style.pointerEvents = '';
+        if (elementBelow?.classList.contains('drop-zone')) {
+            dropZone.classList.add('drag-over');
+        } else {
+            dropZone.classList.remove('drag-over');
+        }
+    }
+
+    function onPointerUp(e) {
+        if (!activeCard) return;
+        const y = e.clientY ?? e.changedTouches?.[0]?.clientY;
+        const card = activeCard;
         dropZone.classList.remove('drag-over');
-        const letter = e.dataTransfer.getData('text/plain');
-        checkAnswer(letter, dropZone);
+
+        const draggedUp = y != null && y < startRect.top;
+        const isCorrect = draggedUp && card.dataset.letter === dropZone.dataset.correct;
+
+        card.classList.remove('dragging');
+        card.style.transform = '';
+        card.style.zIndex = '';
+
+        if (isCorrect) {
+            card.style.display = 'none';
+        }
+
+        if (draggedUp) {
+            checkAnswer(card.dataset.letter, dropZone, card);
+        }
+
+        activeCard = null;
+    }
+
+    cards.forEach(card => {
+        card.draggable = false;
+        card.addEventListener('pointerdown', onPointerDown);
+        card.addEventListener('touchstart', onPointerDown, { passive: false });
     });
+
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('touchmove', onPointerMove, { passive: false });
+    document.addEventListener('pointerup', onPointerUp);
+    document.addEventListener('touchend', onPointerUp);
 }
 
-function checkAnswer(letter, dropZone) {
+function updateScore() {
+    const wrong = firstTryTotal - firstTryCorrect;
+    const percent = firstTryTotal === 0 ? 100 : Math.round((firstTryCorrect / firstTryTotal) * 100);
+    const correctPct = firstTryTotal === 0 ? 0 : (firstTryCorrect / firstTryTotal) * 100;
+    const wrongPct = firstTryTotal === 0 ? 0 : (wrong / firstTryTotal) * 100;
+    scoreBarCorrect.style.width = correctPct + '%';
+    scoreBarWrong.style.width = wrongPct + '%';
+    scoreDisplay.textContent = `${firstTryCorrect} correct, ${wrong} missed (${percent}%)`;
+}
+
+function checkAnswer(letter, dropZone, card) {
     const correct = dropZone.dataset.correct;
     if (letter === correct) {
         playCorrectSound();
         dropZone.textContent = letter;
         dropZone.classList.add('correct');
+        firstTryTotal++;
+        if (!madeWrongGuess) firstTryCorrect++;
+        updateScore();
         setTimeout(() => {
+            madeWrongGuess = false;
             currentWordIndex++;
             if (currentWordIndex >= gameWords.length) {
                 showCelebration();
@@ -212,6 +245,7 @@ function checkAnswer(letter, dropZone) {
         }, 800);
     } else {
         playWrongSound();
+        madeWrongGuess = true;
         dropZone.classList.add('incorrect');
         setTimeout(() => dropZone.classList.remove('incorrect'), 400);
     }
@@ -223,8 +257,12 @@ function showCelebration() {
 
 function startGame() {
     currentWordIndex = 0;
+    firstTryCorrect = 0;
+    firstTryTotal = 0;
+    madeWrongGuess = false;
     gameWords = shuffleArray(WORDS);
     celebration.classList.add('hidden');
+    updateScore();
     loadWord();
 }
 

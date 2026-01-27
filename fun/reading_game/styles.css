@@ -191,10 +191,6 @@ body {
     touch-action: none;
 }
 
-.letter-card:nth-child(1) { background: linear-gradient(135deg, #ff8a80, #ff5252); }
-.letter-card:nth-child(2) { background: linear-gradient(135deg, #82b1ff, #448aff); }
-.letter-card:nth-child(3) { background: linear-gradient(135deg, #b9f6ca, #69f0ae); }
-.letter-card:nth-child(4) { background: linear-gradient(135deg, #ffe57f, #ffd740); }
 
 .letter-card:hover {
     transform: translateY(-5px);
@@ -203,13 +199,43 @@ body {
 
 .letter-card:active, .letter-card.dragging {
     cursor: grabbing;
-    transform: scale(1.1);
-    opacity: 0.8;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
 }
 
 .instruction {
     color: #78909c;
     font-size: 1.1rem;
+}
+
+.score-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.score-bar {
+    display: flex;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #e0e0e0;
+    margin-bottom: 8px;
+}
+
+.score-bar-correct {
+    background: #66bb6a;
+    transition: width 0.3s ease;
+}
+
+.score-bar-wrong {
+    background: #ef5350;
+    transition: width 0.3s ease;
+}
+
+.score-display {
+    color: #78909c;
+    font-size: 0.9rem;
 }
 
 .celebration {
