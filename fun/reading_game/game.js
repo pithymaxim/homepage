@@ -211,13 +211,11 @@ function setupDragDrop() {
     cards.forEach(card => {
         card.draggable = false;
         card.addEventListener('pointerdown', onPointerDown);
-        card.addEventListener('touchstart', onPointerDown, { passive: false });
     });
 
     document.addEventListener('pointermove', onPointerMove);
-    document.addEventListener('touchmove', onPointerMove, { passive: false });
     document.addEventListener('pointerup', onPointerUp);
-    document.addEventListener('touchend', onPointerUp);
+    document.addEventListener('pointercancel', onPointerUp);
 }
 
 function updateScore() {
