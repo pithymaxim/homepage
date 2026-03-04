@@ -4,7 +4,9 @@ let gameWords = [];
 let firstTryCorrect = 0;
 let firstTryTotal = 0;
 let madeWrongGuess = false;
-let answerCheckedThisDrag = false;
+let inputLocked = false;
+let activeCard = null;
+let startRect, offsetX, offsetY;
 
 // DOM elements
 const emojiDisplay = document.querySelector('.emoji-display');
@@ -141,81 +143,67 @@ function loadWord() {
     setupDragDrop();
 }
 
-function setupDragDrop() {
-    const cards = document.querySelectorAll('.letter-card');
+function onPointerDown(e) {
+    if (inputLocked) return;
+    initAudio();
+    e.preventDefault();
+    activeCard = e.currentTarget;
+    startRect = activeCard.getBoundingClientRect();
+    const cx = e.clientX || e.touches[0].clientX;
+    const cy = e.clientY || e.touches[0].clientY;
+    offsetX = cx - startRect.left;
+    offsetY = cy - startRect.top;
+
+    playPhoneticSound(activeCard.dataset.letter);
+    activeCard.classList.add('dragging');
+    activeCard.style.zIndex = '1000';
+    activeCard.setPointerCapture?.(e.pointerId);
+}
+
+function onPointerMove(e) {
+    if (!activeCard) return;
+    e.preventDefault();
+    const x = e.clientX ?? e.touches?.[0]?.clientX;
+    const y = e.clientY ?? e.touches?.[0]?.clientY;
+    if (x == null || y == null) return;
+    const dx = x - (startRect.left + offsetX);
+    const dy = y - (startRect.top + offsetY);
+    activeCard.style.transform = `translate(${dx}px, ${dy}px) scale(1.1)`;
+
+    activeCard.style.pointerEvents = 'none';
+    const elementBelow = document.elementFromPoint(x, y);
+    activeCard.style.pointerEvents = '';
     const dropZone = document.querySelector('.drop-zone');
-
-    let activeCard = null;
-    let startRect, offsetX, offsetY;
-
-    function onPointerDown(e) {
-        initAudio();
-        e.preventDefault();
-        activeCard = e.currentTarget;
-        startRect = activeCard.getBoundingClientRect();
-        const cx = e.clientX || e.touches[0].clientX;
-        const cy = e.clientY || e.touches[0].clientY;
-        offsetX = cx - startRect.left;
-        offsetY = cy - startRect.top;
-
-        playPhoneticSound(activeCard.dataset.letter);
-        activeCard.classList.add('dragging');
-        activeCard.style.zIndex = '1000';
-        activeCard.setPointerCapture?.(e.pointerId);
-    }
-
-    function onPointerMove(e) {
-        if (!activeCard) return;
-        e.preventDefault();
-        const x = e.clientX ?? e.touches?.[0]?.clientX;
-        const y = e.clientY ?? e.touches?.[0]?.clientY;
-        if (x == null || y == null) return;
-        const dx = x - (startRect.left + offsetX);
-        const dy = y - (startRect.top + offsetY);
-        activeCard.style.transform = `translate(${dx}px, ${dy}px) scale(1.1)`;
-
-        activeCard.style.pointerEvents = 'none';
-        const elementBelow = document.elementFromPoint(x, y);
-        activeCard.style.pointerEvents = '';
-        if (elementBelow?.classList.contains('drop-zone')) {
-            dropZone.classList.add('drag-over');
-        } else {
-            dropZone.classList.remove('drag-over');
-        }
-    }
-
-    function onPointerUp(e) {
-        if (!activeCard) return;
-        const y = e.clientY ?? e.changedTouches?.[0]?.clientY;
-        const card = activeCard;
+    if (elementBelow?.classList.contains('drop-zone')) {
+        dropZone.classList.add('drag-over');
+    } else {
         dropZone.classList.remove('drag-over');
-
-        const draggedUp = y != null && y < startRect.top;
-        const isCorrect = draggedUp && card.dataset.letter === dropZone.dataset.correct;
-
-        card.classList.remove('dragging');
-        card.style.transform = '';
-        card.style.zIndex = '';
-
-        if (isCorrect) {
-            card.style.display = 'none';
-        }
-
-        if (draggedUp) {
-            checkAnswer(card.dataset.letter, dropZone, card);
-        }
-
-        activeCard = null;
     }
+}
 
-    cards.forEach(card => {
+function onPointerUp(e) {
+    if (!activeCard) return;
+    const y = e.clientY ?? e.changedTouches?.[0]?.clientY;
+    const card = activeCard;
+    activeCard = null;
+
+    const dropZone = document.querySelector('.drop-zone');
+    dropZone.classList.remove('drag-over');
+
+    card.classList.remove('dragging');
+    card.style.transform = '';
+    card.style.zIndex = '';
+
+    if (y != null && y < startRect.top) {
+        checkAnswer(card, dropZone);
+    }
+}
+
+function setupDragDrop() {
+    document.querySelectorAll('.letter-card').forEach(card => {
         card.draggable = false;
         card.addEventListener('pointerdown', onPointerDown);
     });
-
-    document.addEventListener('pointermove', onPointerMove);
-    document.addEventListener('pointerup', onPointerUp);
-    document.addEventListener('pointercancel', onPointerUp);
 }
 
 function updateScore() {
@@ -248,9 +236,11 @@ function spawnConfetti() {
     }
 }
 
-function checkAnswer(letter, dropZone, card) {
-    const correct = dropZone.dataset.correct;
-    if (letter === correct) {
+function checkAnswer(card, dropZone) {
+    const letter = card.dataset.letter;
+    if (letter === dropZone.dataset.correct) {
+        inputLocked = true;
+        card.style.display = 'none';
         playCorrectSound();
         spawnConfetti();
         setTimeout(speakWord, 500);
@@ -261,6 +251,7 @@ function checkAnswer(letter, dropZone, card) {
         updateScore();
         setTimeout(() => {
             madeWrongGuess = false;
+            inputLocked = false;
             currentWordIndex++;
             if (currentWordIndex >= gameWords.length) {
                 showCelebration();
@@ -285,6 +276,7 @@ function startGame() {
     firstTryCorrect = 0;
     firstTryTotal = 0;
     madeWrongGuess = false;
+    inputLocked = false;
     gameWords = shuffleArray(WORDS);
     celebration.classList.add('hidden');
     updateScore();
@@ -293,5 +285,8 @@ function startGame() {
 
 playAgainBtn.addEventListener('click', startGame);
 soundBtn.addEventListener('click', speakWord);
+document.addEventListener('pointermove', onPointerMove);
+document.addEventListener('pointerup', onPointerUp);
+document.addEventListener('pointercancel', onPointerUp);
 
 startGame();
